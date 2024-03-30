@@ -1,0 +1,45 @@
+aws:
+  credentials:
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+  s3:
+    region: ${AWS_S3_REGION}
+    bucket-name: ${AWS_S3_BUCKET_NAME}
+
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+    properties:
+      hibernate:
+        dialect: ${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT}
+  main:
+    banner-mode: ${SPRING_MAIN_BANNER_MODE}
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: ${LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASICBINDER}
+        SQL: ${LOGGING_LEVEL_ORG_HIBERNATE_SQL}
+        orm:
+          jdbc:
+            bind: ${LOGGING_LEVEL_ORG_HIBERNATE_ORM_JDBC_BIND}
+      springframework:
+        security: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY}
+    root: ${LOGGING_LEVEL_ROOT}
+
+jwt:
+  rsa-private-key: ${JWT_RSA_PRIVATE_KEY}
+  rsa-public-key: ${JWT_RSA_PUBLIC_KEY}
