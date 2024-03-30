@@ -1,5 +1,6 @@
-package com.ims.app.config;
+package com.ims.app.config.userConfig;
 
+import com.ims.app.config.userConfig.UserInfoConfig;
 import com.ims.app.dao.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,5 +19,5 @@ public class UserManagerConfig implements UserDetailsService {
                 .map(UserInfoConfig::new)
                 .orElseThrow(()-> new UsernameNotFoundException("UserEmail: "+emailId+" does not exist"));
     }
-    //this give the user in form of Authth object
+    //this give the user in form of Auth object
 }

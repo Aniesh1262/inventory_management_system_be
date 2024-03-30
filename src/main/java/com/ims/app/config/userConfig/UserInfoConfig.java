@@ -1,4 +1,4 @@
-package com.ims.app.config;
+package com.ims.app.config.userConfig;
 
 import com.ims.app.entity.User;
 import lombok.RequiredArgsConstructor;
