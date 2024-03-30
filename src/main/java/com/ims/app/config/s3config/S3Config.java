@@ -1,4 +1,4 @@
-package com.ims.app.config;
+package com.ims.app.config.s3config;
 
 import org.springframework.beans.factory.annotation.Value;
 import software.amazon.awssdk.regions.Region;
