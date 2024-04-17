@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="tokenBlackList")
+@Table(name = "tokenBlackList")
 public class TokenBlackList {
     @Id
     @GeneratedValue
@@ -21,7 +21,7 @@ public class TokenBlackList {
     private boolean isBlackListed;
 
     public TokenBlackList(String token, boolean b) {
-        this.token=token;
-        this.isBlackListed=true;
+        this.token = token;
+        this.isBlackListed = true;
     }
 }

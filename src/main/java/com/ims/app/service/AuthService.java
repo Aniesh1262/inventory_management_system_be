@@ -18,19 +18,20 @@ public class AuthService {
 
     private final UserRepo userInfoRepo;
     private final JwtTokenGenerator jwtTokenGenerator;
+
     public AuthResponseDto getJwtTokensAfterAuthentication(Authentication authentication) {
-        try
-        {
+        try {
             var userInfoEntity = userInfoRepo.findByEmailId(authentication.getName())
-                    .orElseThrow(()->{
-                        log.error("[AuthService:userSignInAuth] User :{} not found",authentication.getName());
-                        return new ResponseStatusException(HttpStatus.NOT_FOUND,"USER NOT FOUND ");});
+                    .orElseThrow(() -> {
+                        log.error("[AuthService:userSignInAuth] User :{} not found", authentication.getName());
+                        return new ResponseStatusException(HttpStatus.NOT_FOUND, "USER NOT FOUND ");
+                    });
 
 
             String accessToken = jwtTokenGenerator.generateAccessToken(authentication);
 
-            log.info("[AuthService:userSignInAuth] Access token for user:{}, has been generated",userInfoEntity.getFirstName());
-            return  AuthResponseDto.builder()
+            log.info("[AuthService:userSignInAuth] Access token for user:{}, has been generated", userInfoEntity.getFirstName());
+            return AuthResponseDto.builder()
                     .accessToken(accessToken)
                     .accessTokenExpiry(15 * 60)
                     .userName(userInfoEntity.getFirstName())
@@ -38,9 +39,9 @@ public class AuthService {
                     .build();
 
 
-        }catch (Exception e){
-            log.error("[AuthService:userSignInAuth]Exception while authenticating the user due to :"+e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Please Try Again");
+        } catch (Exception e) {
+            log.error("[AuthService:userSignInAuth]Exception while authenticating the user due to :" + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Please Try Again");
         }
     }
 }
