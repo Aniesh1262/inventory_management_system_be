@@ -20,7 +20,6 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(Authentication authentication){
         log.info("auth",authentication);
-        System.out.print("Hi");
         return ResponseEntity.ok(authService.getJwtTokensAfterAuthentication(authentication));
     }
 

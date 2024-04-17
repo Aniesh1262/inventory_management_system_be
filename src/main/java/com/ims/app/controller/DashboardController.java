@@ -36,7 +36,7 @@ public class DashboardController {
 
     }
     @PreAuthorize("hasAuthority('SCOPE_READ')")
-    @GetMapping("/getoutuser")
+    @GetMapping("/logoutUser")
     public ResponseEntity<?> logoutUser(Authentication authentication){
         log.info("logged out"+authentication.getName());
         return ResponseEntity.ok("user logged out successfully");
