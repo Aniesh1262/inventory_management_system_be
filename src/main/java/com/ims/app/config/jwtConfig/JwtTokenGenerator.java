@@ -35,7 +35,7 @@ public class JwtTokenGenerator {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("aniesh")
                 .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plus(15 , ChronoUnit.MINUTES))
+                .expiresAt(Instant.now().plus(15, ChronoUnit.MINUTES))
                 .subject(authentication.getName())
                 .claim("scope", permissions)
                 .build();

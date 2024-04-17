@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="USER")
+@Table(name = "USER")
 public class User {
     @Id
     @GeneratedValue
@@ -18,7 +18,7 @@ public class User {
     @Column(name = "First_Name")
     private String firstName;
 
-    @Column(name="Last_name")
+    @Column(name = "Last_name")
     private String lastName;
 
     @Column(nullable = false, name = "EMAIL_ID", unique = true)

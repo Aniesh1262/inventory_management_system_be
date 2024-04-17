@@ -8,10 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.Collection;
+
 //provides core user information which is later encapsulated into Authentication objects.
 @RequiredArgsConstructor
 public class UserInfoConfig implements UserDetails {
     private final User user;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays

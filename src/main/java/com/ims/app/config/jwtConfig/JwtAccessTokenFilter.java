@@ -32,32 +32,31 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
     private final RSAKeyRecord rsaKeyRecord;
     private final JwtTokenUtils jwtTokenUtils;
     private final TokenBlackListService tokenBlackListService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        try{
+        try {
             log.info("[JwtAccessTokenFilter:doFilterInternal] :: Started ");
 
-            log.info("[JwtAccessTokenFilter:doFilterInternal]Filtering the Http Request:{}",request.getRequestURI());
+            log.info("[JwtAccessTokenFilter:doFilterInternal]Filtering the Http Request:{}", request.getRequestURI());
 
             final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-            JwtDecoder jwtDecoder =  NimbusJwtDecoder.withPublicKey(rsaKeyRecord.rsaPublicKey()).build();
+            JwtDecoder jwtDecoder = NimbusJwtDecoder.withPublicKey(rsaKeyRecord.rsaPublicKey()).build();
 
-            if(!authHeader.startsWith(TokenType.Bearer.name())){
-                filterChain.doFilter(request,response);
+            if (!authHeader.startsWith(TokenType.Bearer.name())) {
+                filterChain.doFilter(request, response);
                 return;
             }
 
             final String token = authHeader.substring(7);
-            if (tokenBlackListService.isBlacklisted(token)){
-                log.info("Token filter");
+            if (tokenBlackListService.isBlacklisted(token)) {
                 response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
                 response.getWriter().write("Not a Valid Request");
-            }
-            else {
+            } else {
 
                 final Jwt jwtToken = jwtDecoder.decode(token);
 
@@ -84,9 +83,9 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
                 log.info("end of log filter");
                 filterChain.doFilter(request, response);
             }
-        }catch (JwtValidationException jwtValidationException){
-            log.error("[JwtAccessTokenFilter:doFilterInternal] Exception due to :{}",jwtValidationException.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,jwtValidationException.getMessage());
+        } catch (JwtValidationException jwtValidationException) {
+            log.error("[JwtAccessTokenFilter:doFilterInternal] Exception due to :{}", jwtValidationException.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, jwtValidationException.getMessage());
         }
     }
 }
