@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserManagerConfig implements UserDetailsService {
     private final UserRepo userRepo;
+
     @Override
     public UserDetails loadUserByUsername(String emailId) throws UsernameNotFoundException {
-        return  userRepo
+        return userRepo
                 .findByEmailId(emailId)
                 .map(UserInfoConfig::new)
-                .orElseThrow(()-> new UsernameNotFoundException("UserEmail: "+emailId+" does not exist"));
+                .orElseThrow(() -> new UsernameNotFoundException("UserEmail: " + emailId + " does not exist"));
     }
     //this give the user in form of Auth object
 }

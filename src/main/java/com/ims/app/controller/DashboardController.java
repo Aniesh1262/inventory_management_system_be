@@ -18,23 +18,24 @@ public class DashboardController {
 
     @PreAuthorize("hasAuthority('SCOPE_READ')")
     @GetMapping("/welcome-message")
-    public ResponseEntity<String> getFirstWelcomeMessage(Authentication authentication){
-        return ResponseEntity.ok("Welcome to the JWT Tutorial:"+authentication.getName());
+    public ResponseEntity<String> getFirstWelcomeMessage(Authentication authentication) {
+        return ResponseEntity.ok("Welcome to the JWT Tutorial:" + authentication.getName());
     }
 
     @PreAuthorize("hasAuthority('SCOPE_READ')")
     @GetMapping("/manager-message")
-    public ResponseEntity<String> getManagerData(Principal principal){
-        return ResponseEntity.ok("Manager::"+principal.getName());
+    public ResponseEntity<String> getManagerData(Principal principal) {
+        return ResponseEntity.ok("Manager::" + principal.getName());
 
     }
 
     @PreAuthorize("hasAuthority('SCOPE_WRITE')")
     @PostMapping("/admin-message")
-    public ResponseEntity<String> getAdminData(@RequestParam("message") String message, Principal principal){
-        return ResponseEntity.ok("Admin::"+principal.getName()+" has this message:"+message);
+    public ResponseEntity<String> getAdminData(@RequestParam("message") String message, Principal principal) {
+        return ResponseEntity.ok("Admin::" + principal.getName() + " has this message:" + message);
 
     }
+
     @PreAuthorize("hasAuthority('SCOPE_READ')")
     @GetMapping("/logoutUser")
     public ResponseEntity<?> logoutUser(Authentication authentication){

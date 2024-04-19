@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="USER")
+@Table(name = "USER")
 public class User {
     @Id
     @GeneratedValue
@@ -18,7 +18,7 @@ public class User {
     @Column(name = "First_Name")
     private String firstName;
 
-    @Column(name="Last_name")
+    @Column(name = "Last_name")
     private String lastName;
 
     @Column(nullable = false, name = "EMAIL_ID", unique = true)
@@ -33,4 +33,12 @@ public class User {
     @Column(nullable = false, name = "ROLES")
     private String roles;
 
+    public User(String firstName, String lastName, String emailId, String password, String mobileNumber, String roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailId = emailId;
+        this.password = password;
+        this.mobileNumber = mobileNumber;
+        this.roles = roles;
+    }
 }
