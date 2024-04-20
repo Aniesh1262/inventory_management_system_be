@@ -32,7 +32,8 @@ public class User {
 
     @Column(nullable = false, name = "ROLES")
     private String roles;
-
+    @Column(name = "image_url",columnDefinition = "json")
+    private String imageUrl;
     public User(String firstName, String lastName, String emailId, String password, String mobileNumber, String roles) {
         this.firstName = firstName;
         this.lastName = lastName;

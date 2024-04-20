@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
@@ -24,7 +24,7 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(Authentication authentication){
         log.info("auth",authentication);
-        System.out.print("Hi");
+
         return ResponseEntity.ok(authService.getJwtTokensAfterAuthentication(authentication));
     }
     @PostMapping("/register")

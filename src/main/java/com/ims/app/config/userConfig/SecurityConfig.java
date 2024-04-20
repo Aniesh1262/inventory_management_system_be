@@ -64,7 +64,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils,tokenBlackListService), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JwtAccessTokenFilter(rsaKeyRecord, jwtTokenUtils,tokenBlackListService), UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                        .logoutUrl("/api/getoutuser")
                        .addLogoutHandler(logoutHandlerService)
@@ -75,6 +75,7 @@ public class SecurityConfig {
                     ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                     ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                 })
+                .addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(withDefaults())
                 .build();
     }
