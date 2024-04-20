@@ -15,15 +15,15 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class JwtTokenUtils {
 
-    public String getUserName(Jwt jwtToken){
+    public String getUserName(Jwt jwtToken) {
         return jwtToken.getSubject();
     }
 
-    public boolean isTokenValid(Jwt jwtToken, UserDetails userDetails){
+    public boolean isTokenValid(Jwt jwtToken, UserDetails userDetails) {
         final String userName = getUserName(jwtToken);
         boolean isTokenExpired = getIfTokenIsExpired(jwtToken);
         boolean isTokenUserSameAsDatabase = userName.equals(userDetails.getUsername());
-        return !isTokenExpired  && isTokenUserSameAsDatabase;
+        return !isTokenExpired && isTokenUserSameAsDatabase;
 
     }
 
@@ -32,10 +32,11 @@ public class JwtTokenUtils {
     }
 
     private final UserRepo userRepo;
-    public UserDetails userDetails(String emailId){
+
+    public UserDetails userDetails(String emailId) {
         return userRepo
                 .findByEmailId(emailId)
                 .map(UserInfoConfig::new)
-                .orElseThrow(()-> new UsernameNotFoundException("UserEmail: "+emailId+" does not exist"));
+                .orElseThrow(() -> new UsernameNotFoundException("UserEmail: " + emailId + " does not exist"));
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,64 +30,62 @@ import java.io.IOException;
 @Slf4j
 public class JwtAccessTokenFilter extends OncePerRequestFilter {
 
-    private final RSAKeyRecord rsaKeyRecord;
     private final JwtTokenUtils jwtTokenUtils;
     private final TokenBlackListService tokenBlackListService;
+    private final JwtDecoder jwtDecoder;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
-        try{
-            log.info("[JwtAccessTokenFilter:doFilterInternal] :: Started ");
-
-            log.info("[JwtAccessTokenFilter:doFilterInternal]Filtering the Http Request:{}",request.getRequestURI());
-
-            final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-            JwtDecoder jwtDecoder =  NimbusJwtDecoder.withPublicKey(rsaKeyRecord.rsaPublicKey()).build();
-
-            if(!authHeader.startsWith(TokenType.Bearer.name())){
-                filterChain.doFilter(request,response);
-                return;
-            }
-
-            final String token = authHeader.substring(7);
-            if (tokenBlackListService.isBlacklisted(token)){
-                log.info("Token filter");
-                response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-                response.getWriter().write("Not a Valid Request");
-            }
-            else {
-
-                final Jwt jwtToken = jwtDecoder.decode(token);
-
-
-                final String userName = jwtTokenUtils.getUserName(jwtToken);
-
-                if (!userName.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-                    UserDetails userDetails = jwtTokenUtils.userDetails(userName);
-                    if (jwtTokenUtils.isTokenValid(jwtToken, userDetails)) {
-                        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-
-                        UsernamePasswordAuthenticationToken createdToken = new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-                        createdToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        securityContext.setAuthentication(createdToken);
-                        SecurityContextHolder.setContext(securityContext);
-                    }
-                }
-                log.info("[JwtAccessTokenFilter:doFilterInternal] Completed");
-                log.info("end of log filter");
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        try {
+            if (isBearerToken(authHeader)) {
+                processToken(authHeader.substring(7), request, response, filterChain);
+            } else {
                 filterChain.doFilter(request, response);
             }
-        }catch (JwtValidationException jwtValidationException){
-            log.error("[JwtAccessTokenFilter:doFilterInternal] Exception due to :{}",jwtValidationException.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,jwtValidationException.getMessage());
+        } catch (JwtValidationException e) {
+            handleJwtException(e, response);
         }
     }
+
+    private boolean isBearerToken(String header) {
+        return header != null && header.startsWith(TokenType.Bearer.name() + " ");
+    }
+
+    private void processToken(String token, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        if (tokenBlackListService.isBlacklisted(token)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token is blacklisted");
+            return;
+        }
+
+        Jwt jwtToken = jwtDecoder.decode(token);
+        String userName = jwtTokenUtils.getUserName(jwtToken);
+
+        if (StringUtils.hasText(userName) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            authenticateUser(userName, jwtToken, request);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private void authenticateUser(String userName, Jwt jwtToken, HttpServletRequest request) {
+        UserDetails userDetails = jwtTokenUtils.userDetails(userName);
+        if (jwtTokenUtils.isTokenValid(jwtToken, userDetails)) {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+    }
+
+    private void handleJwtException(JwtValidationException exception, HttpServletResponse response) throws IOException {
+        log.error("JWT validation error: {}", exception.getMessage());
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("JWT validation error: " + exception.getMessage());
+    }
+
+
 }

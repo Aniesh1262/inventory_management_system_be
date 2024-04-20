@@ -27,22 +27,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class LogoutHandlerService implements LogoutHandler {
     private final RSAKeyRecord rsaKeyRecord;
-   private final TokenBlackListService tokenBlackLstService;
+    private final TokenBlackListService tokenBlackLstService;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.info("Hello");
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(!authHeader.startsWith(TokenType.Bearer.name())){
+        if (!authHeader.startsWith(TokenType.Bearer.name())) {
             return;
         }
-        log.info("hi");
 
         final String token = authHeader.substring(7);
-        if (tokenBlackLstService.isBlacklisted(token)){
+        if (tokenBlackLstService.isBlacklisted(token)) {
             log.info("Token filter");
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             try {

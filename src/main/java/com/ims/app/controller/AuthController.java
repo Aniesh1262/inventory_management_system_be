@@ -21,15 +21,16 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+
     @PostMapping("/sign-in")
     public ResponseEntity<?> authenticateUser(Authentication authentication){
         log.info("auth",authentication);
-        System.out.print("Hi");
         return ResponseEntity.ok(authService.getJwtTokensAfterAuthentication(authentication));
     }
+
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserSignUp userSignUp){
-        Long id =userService.saveUser(userSignUp);
+    public ResponseEntity<?> registerUser(@RequestBody UserSignUp userSignUp) {
+        Long id = userService.saveUser(userSignUp);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
